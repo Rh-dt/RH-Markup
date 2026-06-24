@@ -62,17 +62,21 @@ Pastikan Anda memberikan **satu spasi** setelah simbol sebelum mulai mengetik te
 | +  | Checklist (Tugas) | + Selesaikan fitur parser |
 | --- | Garis Pembatas (Rule) | --- (Tanpa spasi) |
 | ;  | Komentar Tersembunyi | ; Catatan ini tidak akan dirender |
+
 ### 2. Format Teks (Inline Elements)
 Gunakan simbol ini untuk mengapit kata atau kalimat di mana saja.
+
 | Sintaks | Fungsi & Output di Terminal |
-|---|---|
-| *teks* | Cetak tebal (**Bold** warna biru cyan) |
-| _teks_ | Cetak miring (*Italic*) |
-| 'teks' | Latar belakang kuning (*Highlight*) |
-| `teks` | Teks gaya kode (*Monospace* warna magenta) |
-| ~teks~ | Teks dicoret (~~Strikethrough~~) |
-| ^teks^ | Teks pangkat/eksponensial (warna biru) |
-### 3. Keajaiban Kurs Mata Uang (Shortcodes)
+| :--- | :--- |
+| <code>\*teks\*</code> | Cetak tebal (**Bold** warna biru cyan) |
+| <code>\_teks\_</code> | Cetak miring (*Italic*) |
+| <code>'teks'</code> | Latar belakang kuning (*Highlight*) |
+| <code>&#96;teks&#96;</code> | Teks gaya kode (*Monospace* warna magenta) |
+| <code>\~teks\~</code> | Teks dicoret (~Strikethrough~) |
+| <code>\^teks\^</code> | Teks pangkat/eksponensial (warna biru) |
+
+
+### 3. Kurs Mata Uang (Shortcut)
 Ketik lambang dolar ($), diikuti kode opsional, **WAJIB SPASI SATU KALI**, lalu ketik angkanya. Spasi akan otomatis dihilangkan saat dirender dan teks akan dicetak tebal berwarna hijau!
  * **Otomatis Rupiah:** $ 50000 ➡️ **Rp50000**
  * **USD:** $1 150.50 ➡️ **$150.50**
