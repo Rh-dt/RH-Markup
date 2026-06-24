@@ -1,0 +1,12 @@
+{
+  "name": "rhm-framework",
+  "version": "1.0.0",
+  "description": "Universal markup framework with native rust compiler for frontend ecosystems",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["markup", "rust", "react", "vite", "plugin", "tailwind"],
+  "author": "RH",
+  "license": "Apache-2.0"
+}
