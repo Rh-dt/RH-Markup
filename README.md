@@ -37,7 +37,7 @@ chmod +x /usr/local/bin/rhm
 ```
 ### Build Manual dari Source Code
 ```bash
-git clone [https://github.com/Rh-dt/RH-Markup.git](https://github.com/Rh-dt/RH-Markup.git)
+git clone https://github.com/Rh-dt/RH-Markup.git
 cd RH-Markup/rhm_engine
 cargo build --release
 sudo cp target/release/rhm_engine /usr/local/bin/rhm
