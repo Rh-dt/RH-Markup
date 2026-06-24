@@ -32,130 +32,79 @@ fn solve_cryptarithm(equation: &str) -> String {
     if left_parts.contains(&"SEND") && left_parts.contains(&"MORE") && right == "MONEY" {
         return "S=9, E=5, N=6, D=7, M=1, O=0, R=8, Y=2 -> 9567 + 1085 = 10652".to_string();
     }
-    "[PENDING] Membutuhkan siklus komputasi lanjutan".to_string()
+    "[PENDING] Membutuhkan komputasi lanjutan".to_string()
 }
 
-fn execute_math(expression: &str) -> String {
+fn execute_expression(expression: &str) -> String {
     let expr = expression.trim();
-    if expr.starts_with("sys:os_info") { return env::consts::OS.to_string(); }
-    if expr.starts_with("sys:arch") { return env::consts::ARCH.to_string(); }
-    if expr.starts_with("sys:") {
-        let cmd = expr.replace("sys:", "").trim().to_string();
-        return match Command::new("sh").arg("-c").arg(&cmd).output() {
-            Ok(output) => {
-                let stdout = String::from_utf8_lossy(&output.stdout).trim().to_string();
-                if stdout.is_empty() { "[SYS] Proses selesai".to_string() } else { stdout }
+    if let Some(inner) = expr.strip_prefix("rhm.lh(") {
+        let args: Vec<&str> = inner.trim_end_matches(')').split(',').map(str::trim).collect();
+        if !args.is_empty() {
+            let mode = args[0];
+            if mode == "img" && args.len() == 3 {
+                return format!("<img src=\"{}\" alt=\"{}\" fetchpriority=\"high\" decoding=\"async\" loading=\"lazy\" style=\"content-visibility: auto;\" />", args[1], args[2]);
             }
-            Err(_) => "[ERROR] Eksekusi Shell gagal".to_string(),
+            if mode == "font" && args.len() == 2 {
+                return format!("<link rel=\"preload\" href=\"{}\" as=\"font\" type=\"font/woff2\" crossorigin=\"anonymous\" />", args[1]);
+            }
+            if mode == "script" && args.len() == 2 {
+                return format!("<script src=\"{}\" defer async></script>", args[1]);
+            }
+        }
+        return "[ERROR] Parameter rhm.lh invalid".to_string();
+    }
+    if let Some(inner) = expr.strip_prefix("rhm.sk(") {
+        let mode = inner.trim_end_matches(')');
+        if mode == "card" { return "<div class=\"animate-pulse bg-gray-300 rounded-xl h-48 w-full\"></div>".to_string(); }
+        if mode == "text" { return "<div class=\"animate-pulse bg-gray-300 rounded h-4 w-3/4 mb-2\"></div>".to_string(); }
+        if mode == "avatar" { return "<div class=\"animate-pulse bg-gray-300 rounded-full h-12 w-12\"></div>".to_string(); }
+        if mode == "hero" { return "<div class=\"animate-pulse bg-gray-300 rounded-2xl h-96 w-full\"></div>".to_string(); }
+        return "[ERROR] Parameter rhm.sk invalid".to_string();
+    }
+    if expr == "os()" { return env::consts::OS.to_string(); }
+    if expr == "cpu()" { return env::consts::ARCH.to_string(); }
+    if expr == "now()" {
+        return match Command::new("date").output() {
+            Ok(output) => String::from_utf8_lossy(&output.stdout).trim().to_string(),
+            Err(_) => "[ERROR] Sinkronisasi gagal".to_string(),
         };
     }
-    if expr.starts_with("env:") {
-        let key = expr.replace("env:", "").trim().to_string();
-        return env::var(&key).unwrap_or_else(|_| format!("[ERROR] Variabel '{}' tidak ditemukan", key));
+    if let Some(inner) = expr.strip_prefix("sh(") {
+        let cmd = inner.trim_end_matches(')');
+        return match Command::new("sh").arg("-c").arg(cmd).output() {
+            Ok(output) => {
+                let stdout = String::from_utf8_lossy(&output.stdout).trim().to_string();
+                if stdout.is_empty() { "[SYSTEM] Tereksekusi".to_string() } else { stdout }
+            }
+            Err(_) => "[ERROR] Eksekusi shell gagal".to_string(),
+        };
     }
-    if expr.starts_with("str:len(") {
-        let t = expr.replace("str:len(", "");
-        let t = t.trim_end_matches(')');
-        return format!("Len: {}", t.chars().count());
+    if let Some(inner) = expr.strip_prefix("env(") {
+        let key = inner.trim_end_matches(')');
+        return env::var(key).unwrap_or_else(|_| format!("[ERROR] Variabel '{}' nihil", key));
     }
-    if expr.starts_with("str:upper(") {
-        let t = expr.replace("str:upper(", "");
-        return t.trim_end_matches(')').to_uppercase();
-    }
-    if expr.starts_with("str:lower(") {
-        let t = expr.replace("str:lower(", "");
-        return t.trim_end_matches(')').to_lowercase();
-    }
-    if expr.starts_with("str:reverse(") {
-        let t = expr.replace("str:reverse(", "");
-        return t.trim_end_matches(')').chars().rev().collect::<String>();
-    }
-    if expr.starts_with("geom:luas_segitiga(") {
-        let inner = expr.replace("geom:luas_segitiga(", "").replace(')', "");
-        let args: Vec<&str> = inner.split(',').map(str::trim).collect();
+    if let Some(inner) = expr.strip_prefix("len(") { return format!("Len: {}", inner.trim_end_matches(')').chars().count()); }
+    if let Some(inner) = expr.strip_prefix("up(") { return inner.trim_end_matches(')').to_uppercase(); }
+    if let Some(inner) = expr.strip_prefix("low(") { return inner.trim_end_matches(')').to_lowercase(); }
+    if let Some(inner) = expr.strip_prefix("rev(") { return inner.trim_end_matches(')').chars().rev().collect::<String>(); }
+    if let Some(inner) = expr.strip_prefix("LT(") {
+        let args: Vec<&str> = inner.trim_end_matches(')').split(',').map(str::trim).collect();
         if args.len() == 2 {
-            if let (Ok(a), Ok(t)) = (args[0].parse::<f64>(), args[1].parse::<f64>()) { return format!("Luas Segitiga: {}", 0.5 * a * t); }
+            if let (Ok(a), Ok(t)) = (args[0].parse::<f64>(), args[1].parse::<f64>()) { return format!("LT: {}", 0.5 * a * t); }
         }
     }
-    if expr.starts_with("geom:luas_persegi(") {
-        let inner = expr.replace("geom:luas_persegi(", "").replace(')', "");
-        if let Ok(s) = inner.parse::<f64>() { return format!("Luas Persegi: {}", s * s); }
-    }
-    if expr.starts_with("geom:volume_bola(") {
-        let inner = expr.replace("geom:volume_bola(", "").replace(')', "");
-        if let Ok(r) = inner.parse::<f64>() { return format!("Volume Bola: {}", (4.0/3.0) * PI * r.powi(3)); }
-    }
-    if expr.starts_with("phys:kecepatan(") {
-        let inner = expr.replace("phys:kecepatan(", "").replace(')', "");
-        let args: Vec<&str> = inner.split(',').map(str::trim).collect();
+    if let Some(inner) = expr.strip_prefix("LS(") { if let Ok(s) = inner.trim_end_matches(')').parse::<f64>() { return format!("LS: {}", s * s); } }
+    if let Some(inner) = expr.strip_prefix("VO(") { if let Ok(r) = inner.trim_end_matches(')').parse::<f64>() { return format!("VO: {}", (4.0/3.0) * PI * r.powi(3)); } }
+    if let Some(inner) = expr.strip_prefix("LO(") { if let Ok(r) = inner.trim_end_matches(')').parse::<f64>() { return format!("LO: {}", PI * r * r); } }
+    if let Some(inner) = expr.strip_prefix("VK(") { if let Ok(s) = inner.trim_end_matches(')').parse::<f64>() { return format!("VK: {}", s * s * s); } }
+    if let Some(inner) = expr.strip_prefix("v(") {
+        let args: Vec<&str> = inner.trim_end_matches(')').split(',').map(str::trim).collect();
         if args.len() == 2 {
-            if let (Ok(s), Ok(t)) = (args[0].parse::<f64>(), args[1].parse::<f64>()) { return format!("Kecepatan: {} m/s", s / t); }
+            if let (Ok(s), Ok(t)) = (args[0].parse::<f64>(), args[1].parse::<f64>()) { return format!("v: {} m/s", s / t); }
         }
     }
-    if expr.starts_with("geom:") {
-        let cmd = expr.replace("geom:", "").trim().to_lowercase();
-        if cmd.starts_with("luas_lingkaran(") {
-            if let Ok(r) = cmd.replace("luas_lingkaran(", "").replace(')', "").parse::<f64>() { return format!("Luas Lingkaran: {}", PI * r * r); }
-        } else if cmd.starts_with("volume_kubus(") {
-            if let Ok(s) = cmd.replace("volume_kubus(", "").replace(')', "").parse::<f64>() { return format!("Volume Kubus: {}", s * s * s); }
-        }
-    }
-    if expr.starts_with("crypt:") { return solve_cryptarithm(expr.replace("crypt:", "").trim()); }
-    if expr.starts_with("limit:") { return "[LIMIT] Hampiran numerik absolut".to_string(); }
-    if expr.starts_with("sin(") { if let Ok(v) = expr.replace("sin(", "").replace(')', "").parse::<f64>() { return format!("sin({}): {}", v, v.sin()); } }
-    if expr.starts_with("cos(") { if let Ok(v) = expr.replace("cos(", "").replace(')', "").parse::<f64>() { return format!("cos({}): {}", v, v.cos()); } }
-    if expr.starts_with("tan(") { if let Ok(v) = expr.replace("tan(", "").replace(')', "").parse::<f64>() { return format!("tan({}): {}", v, v.tan()); } }
-    if expr.starts_with("sqrt(") { if let Ok(v) = expr.replace("sqrt(", "").replace(')', "").parse::<f64>() { return format!("sqrt({}): {}", v, v.sqrt()); } }
-    if expr.starts_with("cbrt(") { if let Ok(v) = expr.replace("cbrt(", "").replace(')', "").parse::<f64>() { return format!("cbrt({}): {}", v, v.cbrt()); } }
-    if expr.starts_with("abs(") { if let Ok(v) = expr.replace("abs(", "").replace(')', "").parse::<f64>() { return format!("abs({}): {}", v, v.abs()); } }
-    if expr.starts_with("floor(") { if let Ok(v) = expr.replace("floor(", "").replace(')', "").parse::<f64>() { return format!("floor({}): {}", v, v.floor()); } }
-    if expr.starts_with("ceil(") { if let Ok(v) = expr.replace("ceil(", "").replace(')', "").parse::<f64>() { return format!("ceil({}): {}", v, v.ceil()); } }
-    if expr.starts_with("round(") { if let Ok(v) = expr.replace("round(", "").replace(')', "").parse::<f64>() { return format!("round({}): {}", v, v.round()); } }
-    if expr.starts_with("fact(") {
-        if let Ok(v) = expr.replace("fact(", "").replace(')', "").parse::<u64>() {
-            let mut res = 1;
-            for i in 1..=v { res *= i; }
-            return format!("fact({}): {}", v, res);
-        }
-    }
-    if expr.starts_with("max(") {
-        let inner = expr.replace("max(", "").replace(')', "");
-        let args: Vec<&str> = inner.split(',').map(str::trim).collect();
-        if args.len() == 2 { if let (Ok(a), Ok(b)) = (args[0].parse::<f64>(), args[1].parse::<f64>()) { return format!("max: {}", a.max(b)); } }
-    }
-    if expr.starts_with("min(") {
-        let inner = expr.replace("min(", "").replace(')', "");
-        let args: Vec<&str> = inner.split(',').map(str::trim).collect();
-        if args.len() == 2 { if let (Ok(a), Ok(b)) = (args[0].parse::<f64>(), args[1].parse::<f64>()) { return format!("min: {}", a.min(b)); } }
-    }
-    if expr.starts_with("mean(") {
-        let inner = expr.replace("mean(", "").replace(')', "");
-        let nums: Vec<f64> = inner.split(',').filter_map(|s| s.trim().parse::<f64>().ok()).collect();
-        if !nums.is_empty() {
-            let sum: f64 = nums.iter().sum();
-            return format!("mean: {}", sum / nums.len() as f64);
-        }
-    }
-    if expr.starts_with("log(") {
-        let inner = expr.replace("log(", "").replace(')', "");
-        let args: Vec<&str> = inner.split(',').map(str::trim).collect();
-        if args.len() == 2 {
-            if let (Ok(base), Ok(val)) = (args[0].parse::<f64>(), args[1].parse::<f64>()) { return format!("log_{}({}): {}", base, val, val.log(base)); }
-        }
-    }
-    if expr.contains('%') {
-        let parts: Vec<&str> = expr.split('%').map(str::trim).collect();
-        if parts.len() == 2 {
-            if let (Ok(a), Ok(b)) = (parts[0].parse::<f64>(), parts[1].parse::<f64>()) { return format!("{} % {}: {}", a, b, a % b); }
-        }
-    }
-    if expr.contains('^') {
-        let parts: Vec<&str> = expr.split('^').map(str::trim).collect();
-        if parts.len() == 2 {
-            if let (Ok(base), Ok(power)) = (parts[0].parse::<f64>(), parts[1].parse::<f64>()) { return format!("{} ^ {}: {}", base, power, base.powf(power)); }
-        }
-    }
-    format!("[MATH ERROR] Ekspresi tidak valid: {}", expr)
+    if let Some(inner) = expr.strip_prefix("crp(") { return solve_cryptarithm(inner.trim_end_matches(')')); }
+    format!("[ERROR] Sintaks invalid: {}", expr)
 }
 
 fn parse_currency_native(text: &str) -> String {
@@ -254,12 +203,12 @@ fn run_native_renderer(ast: Vec<RhmNode>) -> io::Result<()> {
                 let prefix = match level { 1 => format!("{}{}=== ", ANSI_BOLD, COLOR_BLUE), 2 => format!("{}{}--- ", ANSI_BOLD, COLOR_CYAN), _ => format!("{}{}::: ", ANSI_BOLD, COLOR_YELLOW) };
                 writeln!(handle, "{}{}{}\n", prefix, process_inline_native(text), ANSI_RESET)?;
             }
-            RhmNode::Alert(text) => writeln!(handle, "{}{} [WARNING] {} {}\n", BG_RED, ANSI_BOLD, process_inline_native(text), ANSI_RESET)?,
+            RhmNode::Alert(text) => writeln!(handle, "{}{} [WARN] {} {}\n", BG_RED, ANSI_BOLD, process_inline_native(text), ANSI_RESET)?,
             RhmNode::Quote(text) => writeln!(handle, "{}{}  | {}{}\n", COLOR_BLUE, ANSI_ITALIC, process_inline_native(text), ANSI_RESET)?,
             RhmNode::Bullet(text) => writeln!(handle, "  {}-{} {}\n", COLOR_CYAN, ANSI_RESET, process_inline_native(text))?,
-            RhmNode::Checklist(text) => writeln!(handle, "  {}[X]{} {}\n", COLOR_GREEN, ANSI_RESET, process_inline_native(text))?,
+            RhmNode::Checklist(text) => writeln!(handle, "  {}[OK]{} {}\n", COLOR_GREEN, ANSI_RESET, process_inline_native(text))?,
             RhmNode::Rule => writeln!(handle, "{}{}{}\n", COLOR_MAGENTA, "--------------------------------------------------", ANSI_RESET)?,
-            RhmNode::MathEval(expr) => writeln!(handle, "  {}{}[EXEC] {}{} \n", ANSI_BOLD, COLOR_YELLOW, execute_math(expr), ANSI_RESET)?,
+            RhmNode::MathEval(expr) => writeln!(handle, "  {}{}[OUTPUT] {}{} \n", ANSI_BOLD, COLOR_YELLOW, execute_expression(expr), ANSI_RESET)?,
             RhmNode::Paragraph(text) => writeln!(handle, "{}\n", process_inline_native(text))?,
         }
     }
@@ -271,45 +220,46 @@ fn main() {
     let start = Instant::now();
     let args: Vec<String> = env::args().collect();
     if args.len() < 2 {
-        eprintln!("{} [ERROR] RHM ENGINE: Nama file tidak ditemukan. {}", COLOR_RED, ANSI_RESET);
+        eprintln!("{} [FATAL] Argumen tidak lengkap {}", COLOR_RED, ANSI_RESET);
         process::exit(1);
     }
-    let file_path = &args[1];
-    if !file_path.ends_with(".rhm") {
-        eprintln!("{} [ERROR] FORMAT: Eksklusif ekstensi .rhm {}", COLOR_RED, ANSI_RESET);
-        process::exit(1);
-    }
-    match fs::read_to_string(file_path) {
-        Ok(source_code) => {
-            let lines_count = source_code.lines().count();
-            let words_count = source_code.split_whitespace().count();
-            let chars_count = source_code.chars().count();
-            
-            let ast = parse_blocks(&source_code);
-            if let Err(e) = run_native_renderer(ast) {
-                eprintln!("{} [ERROR] I/O: Gagal menulis ke terminal (Detail: {}) {}", COLOR_RED, e, ANSI_RESET);
-                process::exit(1);
-            }
-            
-            let duration = start.elapsed();
-            let total_secs = duration.as_secs();
-            let millis = duration.subsec_millis();
-            let time_str = if total_secs >= 3600 {
-                format!("{:02}:{:02}:{:02}.{:03}", total_secs / 3600, (total_secs % 3600) / 60, total_secs % 60, millis)
-            } else if total_secs >= 60 {
-                format!("{:02}:{:02}.{:03}", total_secs / 60, total_secs % 60, millis)
-            } else if total_secs > 0 {
-                format!("{}.{:03}s", total_secs, millis)
-            } else {
-                format!("{}ms", millis)
-            };
-            
-            println!("  \x1b[2m\x1b[3m[ANALYTICS] {} Lines | {} Words | {} Chars\x1b[0m", lines_count, words_count, chars_count);
-            println!("  \x1b[2m\x1b[3m[TIME] Rendered in [{}] | RHM Engine v1.0.0\x1b[0m\n", time_str);
-        }
-        Err(e) => {
-            eprintln!("{} [ERROR] FILE: {} (Detail: {}) {}", COLOR_RED, file_path, e, ANSI_RESET);
+    let source_code = if args[1] == "-e" || args[1] == "--eval" {
+        if args.len() < 3 {
+            eprintln!("{} [FATAL] String evaluasi tidak ditemukan {}", COLOR_RED, ANSI_RESET);
             process::exit(1);
         }
+        args[2].clone()
+    } else {
+        let file_path = &args[1];
+        if !file_path.ends_with(".rhm") {
+            eprintln!("{} [FATAL] Ekstensi file wajib .rhm {}", COLOR_RED, ANSI_RESET);
+            process::exit(1);
+        }
+        fs::read_to_string(file_path).unwrap_or_else(|_| {
+            eprintln!("{} [FATAL] Gagal membaca file fisik {}", COLOR_RED, ANSI_RESET);
+            process::exit(1);
+        })
+    };
+    let lines_count = source_code.lines().count();
+    let words_count = source_code.split_whitespace().count();
+    let chars_count = source_code.chars().count();
+    let ast = parse_blocks(&source_code);
+    if let Err(e) = run_native_renderer(ast) {
+        eprintln!("{} [FATAL] Kegagalan I/O terminal (Log: {}) {}", COLOR_RED, e, ANSI_RESET);
+        process::exit(1);
     }
+    let duration = start.elapsed();
+    let total_secs = duration.as_secs();
+    let millis = duration.subsec_millis();
+    let time_str = if total_secs >= 3600 {
+        format!("{:02}:{:02}:{:02}.{:03}", total_secs / 3600, (total_secs % 3600) / 60, total_secs % 60, millis)
+    } else if total_secs >= 60 {
+        format!("{:02}:{:02}.{:03}", total_secs / 60, total_secs % 60, millis)
+    } else if total_secs > 0 {
+        format!("{}.{:03}s", total_secs, millis)
+    } else {
+        format!("{}ms", millis)
+    };
+    println!("  \x1b[2m\x1b[3m[ANALYTICS] {} Lines | {} Words | {} Chars\x1b[0m", lines_count, words_count, chars_count);
+    println!("  \x1b[2m\x1b[3m[PROFILE] Compiled in [{}] | RHM Engine v1.4.0\x1b[0m\n", time_str);
 }
