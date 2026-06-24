@@ -25,7 +25,7 @@ Karena ini adalah *Native Engine*, Anda harus mengompilasi dan menginstal *binar
 **1. Clone dan Build Engine:**
 ```bash
 # Pastikan Rust sudah terinstal ([https://rustup.rs/](https://rustup.rs/))
-git clone <URL_GITHUB_MAS_RH>
+git clone https://github.com/Rh-dt/RH-Markup.git
 cd rhm_engine
 cargo build --release
 
