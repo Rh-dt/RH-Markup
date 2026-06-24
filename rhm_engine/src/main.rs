@@ -161,11 +161,11 @@ fn process_inline_native(text: &str) -> String {
         while let Some(c) = chars.next() {
             if c == *sym {
                 if in_tag { temp.push_str(tag_close); in_tag = false; } 
-                else { temp.push_str(&tag_open); in_tag = true; }
+                else { temp.push_str(tag_open); in_tag = true; }
             } else { temp.push(c); }
         }
         if in_tag {
-            if let Some(pos) = temp.rfind(&tag_open) {
+            if let Some(pos) = temp.rfind(tag_open.as_str()) {
                 temp.replace_range(pos..pos + tag_open.len(), &sym.to_string());
             }
         }
