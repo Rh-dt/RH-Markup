@@ -26,17 +26,13 @@ const BG_RED: &str = "\x1b[41m";
 
 fn solve_cryptarithm(equation: &str) -> String {
     let parts: Vec<&str> = equation.split('=').collect();
-    if parts.len() != 2 {
-        return "Error: Format tidak valid".to_string();
-    }
-    
+    if parts.len() != 2 { return "Error: Format tidak valid".to_string(); }
     let left_parts: Vec<&str> = parts[0].split('+').map(str::trim).collect();
     let right = parts[1].trim();
     
     if left_parts.contains(&"SEND") && left_parts.contains(&"MORE") && right == "MONEY" {
         return "S=9, E=5, N=6, D=7, M=1, O=0, R=8, Y=2 -> 9567 + 1085 = 10652".to_string();
     }
-    
     "Engine Solver BETA: Membutuhkan siklus komputasi lebih lanjut.".to_string()
 }
 
@@ -44,29 +40,19 @@ fn eval_geometry(cmd: &str) -> String {
     let lower_cmd = cmd.to_lowercase();
     if lower_cmd.starts_with("luas_lingkaran") {
         let r_str = cmd.replace("luas_lingkaran(", "").replace(')', "");
-        if let Ok(r) = r_str.parse::<f64>() {
-            return format!("Luas Lingkaran (r={}): {:.2}", r, PI * r * r);
-        }
+        if let Ok(r) = r_str.parse::<f64>() { return format!("Luas Lingkaran (r={}): {:.2}", r, PI * r * r); }
     } else if lower_cmd.starts_with("volume_kubus") {
         let s_str = cmd.replace("volume_kubus(", "").replace(')', "");
-        if let Ok(s) = s_str.parse::<f64>() {
-            return format!("Volume Kubus (s={}): {:.2}", s, s * s * s);
-        }
+        if let Ok(s) = s_str.parse::<f64>() { return format!("Volume Kubus (s={}): {:.2}", s, s * s * s); }
     }
     "Error: Sintaks Geometri tidak dikenal.".to_string()
 }
 
 fn execute_math(expression: &str) -> String {
     let expr = expression.trim();
-    if expr.starts_with("geom:") {
-        return eval_geometry(expr.replace("geom:", "").trim());
-    }
-    if expr.starts_with("crypt:") {
-        return solve_cryptarithm(expr.replace("crypt:", "").trim());
-    }
-    if expr.starts_with("limit:") {
-        return "Limit: Mendekati nilai hampiran numerik absolut.".to_string();
-    }
+    if expr.starts_with("geom:") { return eval_geometry(expr.replace("geom:", "").trim()); }
+    if expr.starts_with("crypt:") { return solve_cryptarithm(expr.replace("crypt:", "").trim()); }
+    if expr.starts_with("limit:") { return "Limit: Mendekati nilai hampiran numerik absolut.".to_string(); }
     if expr.starts_with("log(") {
         let inner = expr.replace("log(", "").replace(')', "");
         let args: Vec<&str> = inner.split(',').map(str::trim).collect();
@@ -107,13 +93,25 @@ fn parse_currency_native(text: &str) -> String {
                     j += 1;
                 }
                 if !amount.is_empty() {
+                    // EKSPANSI KURS MATA UANG GLOBAL
                     let symbol = match code.as_str() {
                         "" | _ => "Rp",
-                        "1" => "$",
-                        "2" => "€",
-                        "3" => "¥",
-                        "4" => "£",
-                        "5" => "﷼",
+                        "1" => "$",   // USD
+                        "2" => "€",   // EUR
+                        "3" => "¥",   // JPY
+                        "4" => "£",   // GBP
+                        "5" => "﷼",   // SAR
+                        "6" => "元",  // CNY (China)
+                        "7" => "₽",   // RUB (Rusia)
+                        "8" => "RM",  // MYR (Malaysia)
+                        "9" => "S$",  // SGD (Singapura)
+                        "10" => "฿",  // THB (Thailand)
+                        "11" => "₱",  // PHP (Filipina)
+                        "12" => "₫",  // VND (Vietnam)
+                        "13" => "B$", // BND (Brunei)
+                        "14" => "៛",  // KHR (Kamboja)
+                        "15" => "₭",  // LAK (Laos)
+                        "16" => "K",  // MMK (Myanmar)
                     };
                     output.push_str(&format!("{}{}{}{}{}", ANSI_BOLD, COLOR_GREEN, symbol, amount, ANSI_RESET));
                     i = j;
@@ -167,29 +165,17 @@ fn parse_blocks(input: &str) -> Vec<RhmNode> {
     let mut ast = Vec::new();
     for line in input.lines() {
         let t = line.trim();
-        if t.is_empty() || t.starts_with(';') {
-            continue;
-        } else if let Some(c) = t.strip_prefix("$= ") {
-            ast.push(RhmNode::MathEval(c.to_string()));
-        } else if t == "---" {
-            ast.push(RhmNode::Rule);
-        } else if let Some(c) = t.strip_prefix("### ") {
-            ast.push(RhmNode::Header(3, c.to_string()));
-        } else if let Some(c) = t.strip_prefix("## ") {
-            ast.push(RhmNode::Header(2, c.to_string()));
-        } else if let Some(c) = t.strip_prefix("# ") {
-            ast.push(RhmNode::Header(1, c.to_string()));
-        } else if let Some(c) = t.strip_prefix("! ") {
-            ast.push(RhmNode::Alert(c.to_string()));
-        } else if let Some(c) = t.strip_prefix("> ") {
-            ast.push(RhmNode::Quote(c.to_string()));
-        } else if let Some(c) = t.strip_prefix("- ") {
-            ast.push(RhmNode::Bullet(c.to_string()));
-        } else if let Some(c) = t.strip_prefix("+ ") {
-            ast.push(RhmNode::Checklist(c.to_string()));
-        } else {
-            ast.push(RhmNode::Paragraph(t.to_string()));
-        }
+        if t.is_empty() || t.starts_with(';') { continue; } 
+        else if let Some(c) = t.strip_prefix("$= ") { ast.push(RhmNode::MathEval(c.to_string())); } 
+        else if t == "---" { ast.push(RhmNode::Rule); } 
+        else if let Some(c) = t.strip_prefix("### ") { ast.push(RhmNode::Header(3, c.to_string())); } 
+        else if let Some(c) = t.strip_prefix("## ") { ast.push(RhmNode::Header(2, c.to_string())); } 
+        else if let Some(c) = t.strip_prefix("# ") { ast.push(RhmNode::Header(1, c.to_string())); } 
+        else if let Some(c) = t.strip_prefix("! ") { ast.push(RhmNode::Alert(c.to_string())); } 
+        else if let Some(c) = t.strip_prefix("> ") { ast.push(RhmNode::Quote(c.to_string())); } 
+        else if let Some(c) = t.strip_prefix("- ") { ast.push(RhmNode::Bullet(c.to_string())); } 
+        else if let Some(c) = t.strip_prefix("+ ") { ast.push(RhmNode::Checklist(c.to_string())); } 
+        else { ast.push(RhmNode::Paragraph(t.to_string())); }
     }
     ast
 }
@@ -201,34 +187,16 @@ fn run_native_renderer(ast: Vec<RhmNode>) -> io::Result<()> {
     for node in ast {
         match node {
             RhmNode::Header(level, text) => {
-                let prefix = match level {
-                    1 => format!("{}{}=== ", ANSI_BOLD, COLOR_BLUE),
-                    2 => format!("{}{}--- ", ANSI_BOLD, COLOR_CYAN),
-                    _ => format!("{}{}::: ", ANSI_BOLD, COLOR_YELLOW),
-                };
+                let prefix = match level { 1 => format!("{}{}=== ", ANSI_BOLD, COLOR_BLUE), 2 => format!("{}{}--- ", ANSI_BOLD, COLOR_CYAN), _ => format!("{}{}::: ", ANSI_BOLD, COLOR_YELLOW) };
                 writeln!(handle, "{}{}{}\n", prefix, process_inline_native(&text), ANSI_RESET)?;
             }
-            RhmNode::Alert(text) => {
-                writeln!(handle, "{}{} ⚠️  {} {}\n", BG_RED, ANSI_BOLD, process_inline_native(&text), ANSI_RESET)?;
-            }
-            RhmNode::Quote(text) => {
-                writeln!(handle, "{}{}  | {}{}\n", COLOR_BLUE, ANSI_ITALIC, process_inline_native(&text), ANSI_RESET)?;
-            }
-            RhmNode::Bullet(text) => {
-                writeln!(handle, "  {}•{} {}\n", COLOR_CYAN, ANSI_RESET, process_inline_native(&text))?;
-            }
-            RhmNode::Checklist(text) => {
-                writeln!(handle, "  {}☑{} {}\n", COLOR_GREEN, ANSI_RESET, process_inline_native(&text))?;
-            }
-            RhmNode::Rule => {
-                writeln!(handle, "{}{}{}\n", COLOR_MAGENTA, "──────────────────────────────────────────────────", ANSI_RESET)?;
-            }
-            RhmNode::MathEval(expr) => {
-                writeln!(handle, "  {}{}🧮 [MATH] {}{} \n", ANSI_BOLD, COLOR_YELLOW, execute_math(expr), ANSI_RESET)?;
-            }
-            RhmNode::Paragraph(text) => {
-                writeln!(handle, "{}\n", process_inline_native(&text))?;
-            }
+            RhmNode::Alert(text) => writeln!(handle, "{}{} ⚠️  {} {}\n", BG_RED, ANSI_BOLD, process_inline_native(&text), ANSI_RESET)?,
+            RhmNode::Quote(text) => writeln!(handle, "{}{}  | {}{}\n", COLOR_BLUE, ANSI_ITALIC, process_inline_native(&text), ANSI_RESET)?,
+            RhmNode::Bullet(text) => writeln!(handle, "  {}•{} {}\n", COLOR_CYAN, ANSI_RESET, process_inline_native(&text))?,
+            RhmNode::Checklist(text) => writeln!(handle, "  {}☑{} {}\n", COLOR_GREEN, ANSI_RESET, process_inline_native(&text))?,
+            RhmNode::Rule => writeln!(handle, "{}{}{}\n", COLOR_MAGENTA, "──────────────────────────────────────────────────", ANSI_RESET)?,
+            RhmNode::MathEval(expr) => writeln!(handle, "  {}{}🧮 [MATH] {}{} \n", ANSI_BOLD, COLOR_YELLOW, execute_math(expr), ANSI_RESET)?,
+            RhmNode::Paragraph(text) => writeln!(handle, "{}\n", process_inline_native(&text))?,
         }
     }
     writeln!(handle, "\n")?;
@@ -241,13 +209,11 @@ fn main() {
         eprintln!("{}❌ RHM ENGINE BETA: Nama file tidak ditemukan.{}", COLOR_RED, ANSI_RESET);
         process::exit(1);
     }
-    
     let file_path = &args[1];
     if !file_path.ends_with(".rhm") {
         eprintln!("{}❌ FORMAT ERROR: Eksklusif ekstensi .rhm{}", COLOR_RED, ANSI_RESET);
         process::exit(1);
     }
-    
     match fs::read_to_string(file_path) {
         Ok(source_code) => {
             let ast = parse_blocks(&source_code);
