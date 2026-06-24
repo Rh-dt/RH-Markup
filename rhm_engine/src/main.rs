@@ -110,7 +110,7 @@ fn parse_currency_native(text: &str) -> String {
                         "14" => "៛",  // KHR (Kamboja)
                         "15" => "₭",  // LAK (Laos)
                         "16" => "K",  // MMK (Myanmar)
-                        _ => "Rp",    // PERBAIKAN: Default Fallback dipindah ke paling bawah!
+                        _ => "Rp",    // Default Fallback
                     };
                     output.push_str(&format!("{}{}{}{}{}", ANSI_BOLD, COLOR_GREEN, symbol, amount, ANSI_RESET));
                     i = j;
@@ -194,7 +194,8 @@ fn run_native_renderer(ast: Vec<RhmNode>) -> io::Result<()> {
             RhmNode::Bullet(text) => writeln!(handle, "  {}•{} {}\n", COLOR_CYAN, ANSI_RESET, process_inline_native(&text))?,
             RhmNode::Checklist(text) => writeln!(handle, "  {}☑{} {}\n", COLOR_GREEN, ANSI_RESET, process_inline_native(&text))?,
             RhmNode::Rule => writeln!(handle, "{}{}{}\n", COLOR_MAGENTA, "──────────────────────────────────────────────────", ANSI_RESET)?,
-            RhmNode::MathEval(expr) => writeln!(handle, "  {}{}🧮 [MATH] {}{} \n", ANSI_BOLD, COLOR_YELLOW, execute_math(expr), ANSI_RESET)?,
+            // PERBAIKAN: Menambahkan `&` pada `expr` untuk memberikan referensi (Borrow) sesuai permintaan Rust.
+            RhmNode::MathEval(expr) => writeln!(handle, "  {}{}🧮 [MATH] {}{} \n", ANSI_BOLD, COLOR_YELLOW, execute_math(&expr), ANSI_RESET)?,
             RhmNode::Paragraph(text) => writeln!(handle, "{}\n", process_inline_native(&text))?,
         }
     }
