@@ -93,9 +93,7 @@ fn parse_currency_native(text: &str) -> String {
                     j += 1;
                 }
                 if !amount.is_empty() {
-                    // EKSPANSI KURS MATA UANG GLOBAL
                     let symbol = match code.as_str() {
-                        "" | _ => "Rp",
                         "1" => "$",   // USD
                         "2" => "€",   // EUR
                         "3" => "¥",   // JPY
@@ -112,6 +110,7 @@ fn parse_currency_native(text: &str) -> String {
                         "14" => "៛",  // KHR (Kamboja)
                         "15" => "₭",  // LAK (Laos)
                         "16" => "K",  // MMK (Myanmar)
+                        _ => "Rp",    // PERBAIKAN: Default Fallback dipindah ke paling bawah!
                     };
                     output.push_str(&format!("{}{}{}{}{}", ANSI_BOLD, COLOR_GREEN, symbol, amount, ANSI_RESET));
                     i = j;
