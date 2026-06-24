@@ -1,106 +1,110 @@
-# 🚀 RH Markup (.rhm) Engine
+# RH Markup (.rhm) Engine
 
 [![Version](https://img.shields.io/github/v/release/Rh-dt/RH-Markup?include_prereleases&color=blue&label=version)](https://github.com/Rh-dt/RH-Markup/releases)
 [![Last Commit](https://img.shields.io/github/last-commit/Rh-dt/RH-Markup?color=brightgreen)](https://github.com/Rh-dt/RH-Markup/commits/home)
 [![Repo Size](https://img.shields.io/github/repo-size/Rh-dt/RH-Markup?color=orange)](https://github.com/Rh-dt/RH-Markup)
 
-Selamat datang di **RH Markup (.rhm)** Ini adalah bahasa *markup* berbasis teks generasi baru yang dirancang khusus untuk kecepatan, efisiensi pengetikan, dan eksekusi langsung di terminal secara mandiri (*Native CLI Rendering*). 
+RH Markup (.rhm) adalah bahasa markup berbasis teks generasi baru yang dirancang secara spesifik untuk kecepatan, efisiensi pengetikan, dan eksekusi komputasi langsung di terminal (Native CLI Rendering). 
 
-Kini di versi BETA, `.rhm` tidak hanya sekadar merender visual, tetapi juga bertindak sebagai **Computer Algebra System (CAS)** ringan yang mampu mengevaluasi matematika rumit secara *real-time* langsung di dalam dokumen!
-
----
-
-## ✨ Fitur Unggulan
-
-- **Native CLI Rendering:** Tidak butuh HTML atau Browser. File `.rhm` dieksekusi dan diwarnai langsung di terminal Anda!
-- **Zero-Panic Architecture:** Memori dialokasikan secara sadar $O(1)$ untuk memastikan program anti-*crash* dari kesalahan pengetikan.
-- **Auto-Currency Formatting:** Injeksi format mata uang pintar (contoh: `$1 50000` menjadi `$50000` dengan warna hijau tebal).
-- **Embedded Math Evaluator:** Hitung Logaritma, Eksponensial, hingga Geometri tanpa perlu berpindah ke kalkulator atau aplikasi lain.
+Pada rilis versi 1.0, mesin ini telah terintegrasi dengan Computer Algebra System (CAS), utilitas pembacaan variabel sistem operasi (OS Bridge), dan telemetri dokumen waktu nyata. Mesin ini dibangun menggunakan Rust dengan arsitektur Zero-Allocation AST untuk menjamin konsumsi memori yang absolut minimum.
 
 ---
 
-## 🛠️ Instalasi & Setup
+## Spesifikasi Teknis Utama
 
-Pilih salah satu metode instalasi di bawah ini:
+- Native CLI Rendering: File dieksekusi dan diformat langsung ke standar output terminal tanpa ketergantungan peramban web.
+- Zero-Allocation Abstract Syntax Tree: Pemanfaatan referensi memori statis untuk memangkas duplikasi data pada RAM, menghasilkan kompleksitas memori yang efisien.
+- Embedded Computer Algebra System: Evaluasi matematika tingkat lanjut (Trigonometri, Logaritma, Kalkulus Numerik) yang dijalankan secara mandiri.
+- Sistem Telemetri Dinamis: Analitik resolusi tinggi untuk penghitungan baris, kata, karakter, dan waktu eksekusi kompilasi (milidetik).
+- Strict Pure-Text Mode: Lingkungan terminal yang disanitasi dari karakter non-standar untuk kompatibilitas penuh dengan server headless.
 
-### Instalasi Cepat via Cargo Git (Rekomendasi)
-Jika Anda memiliki Rust, Anda dapat langsung menginstal *engine* ini secara global:
+---
+
+## Panduan Instalasi
+
+Terdapat beberapa metode instalasi yang didukung secara resmi:
+
+### Instalasi Global via Cargo (Direkomendasikan)
+Kompilasi dan instalasi otomatis melalui jaringan repositori Git:
 ```bash
 cargo install --git https://github.com/Rh-dt/RH-Markup
-```
 
-### Build Manual dari Source Code
+```
+### Kompilasi Manual dari Kode Sumber
 ```bash
 git clone https://github.com/Rh-dt/RH-Markup.git
 cd RH-Markup/rhm_engine
 cargo build --release
 sudo cp target/release/rhm_engine /usr/local/bin/rhm
+
 ```
-## 📖 Cara Menulis .rhm
-Buat file berekstensi .rhm (contoh: catatan.rhm), lalu jalankan dengan perintah: rhm catatan.rhm
-
-### 1. Struktur Dokumen
-Berikan **satu spasi** setelah simbol di awal baris.
-| Simbol | Fungsi | Contoh Penulisan |
+## Referensi Sintaks (.rhm)
+### 1. Struktur Dokumen (Block Elements)
+Berikan satu spasi setelah penanda awal baris.
+| Penanda | Fungsi Struktural | Contoh Penulisan |
 |---|---|---|
-| #  | Header 1 (Judul Utama) | # Laporan Keuangan |
-| ##  | Header 2 (Sub Judul) | ## Pemasukan Bulan Ini |
-| ###  | Header 3 (Sub-sub Judul) | ### Detail Tambahan |
-| !  | Alert / Peringatan | ! Segera lakukan backup data! |
-| >  | Kutipan / Quotes | > "Code is poetry." |
-| -  | Bullet List | - Kopi hitam |
-| +  | Checklist (Tugas) | + Selesaikan fitur parser |
-| --- | Garis Pembatas (Rule) | --- (Tanpa spasi) |
-| ;  | Komentar Tersembunyi | ; Catatan ini tidak akan dirender |
+| #  | Tajuk Tingkat 1 | # Laporan Analisis |
+| ##  | Tajuk Tingkat 2 | ## Metodologi |
+| ###  | Tajuk Tingkat 3 | ### Parameter Uji |
+| !  | Peringatan Sistem | ! Data belum divalidasi |
+| >  | Blok Kutipan | > Referensi arsitektur |
+| -  | Daftar Tidak Berurutan | - Modul A |
+| +  | Daftar Tugas | + Verifikasi subsistem |
+| --- | Garis Separator | --- (Tanpa spasi) |
+| ;  | Komentar Kode | ; Baris ini diabaikan oleh parser |
 
-### 2. Format Teks
-Apit kata/kalimat di mana saja menggunakan simbol berikut.
-| Sintaks | Fungsi & Output di Terminal |
+### 2. Format Tipografi (Inline Elements)
+| Penanda Leksikal | Output Terminal |
 |---|---|
-| <code>*teks*</code> | Cetak tebal (**Bold** warna biru cyan) |
-| <code>_teks_</code> | Cetak miring (*Italic*) |
-| <code>'teks'</code> | Latar belakang kuning (*Highlight*) |
-| <code>`teks`</code> | Teks gaya kode (*Monospace* warna magenta) |
-| <code>~teks~</code> | Teks dicoret (~~Strikethrough~~) |
+| <code>*teks*</code> | Cetak tebal (Cyan) |
+| <code>_teks_</code> | Cetak miring |
+| <code>'teks'</code> | Sorotan latar belakang (Highlight) |
+| <code>`teks`</code> | Monospace format kode |
+| <code>~teks~</code> | Teks dicoret |
 
-### 3. Keajaiban Kurs Mata Uang (Shortcut)
-Ketik dolar ($) + kode opsional + **SPASI SATU KALI** + angka. Spasi otomatis hilang dan menjadi teks hijau tebal!
- * $ 50000 ➡️ **Rp50000**
- * $1 150 ➡️ **$150** (USD)
- * $2 200 ➡️ **€200** (Euro)
- * $3 5000 ➡️ **¥5000** (Yen)
- * $4 80 ➡️ **£80** (Pound)
- * $5 120 ➡️ **﷼120** (Riyal)
+### 3. Format Nilai Tukar (Currency Shortcodes)
+Gunakan simbol dolar diikuti kode angka regional dan satu spasi sebelum nominal.
+ * $ 50000 menjadi IDR 50000
+ * $1 150 menjadi USD 150
+ * $2 200 menjadi EUR 200
+ * Regional Asia: CNY ($6), JPY ($3), SGD ($9), MYR ($8)
+ * Regional Eropa/Global: GBP ($4), RUB ($7), SAR ($5)
 
-### 4. Matematika & Logika (BETA)
-Tidak perlu buka kalkulator! Gunakan sintaks $=  di awal baris untuk mengevaluasi rumus secara otomatis. Mesin akan merendernya dalam format khusus berwarna kuning di terminal.
-| Modul Komputasi | Sintaks Dokumen .rhm | Output Evaluasi Terminal |
-|---|---|---|
-| **Eksponensial (Pangkat)** | $= 2 ^ 10 | 2 ^ 10 = 1024.0000 |
-| **Logaritma** (basis, nilai) | $= log(10, 1000) | log_base_10(1000) = 3.0000 |
-| **Geometri: Luas Lingkaran** | $= geom: luas_lingkaran(7) | Luas Lingkaran (r=7): 153.94 |
-| **Geometri: Volume Kubus** | $= geom: volume_kubus(5) | Volume Kubus (s=5): 125.00 |
-| **Logika Cryptarithm** | $= crypt: SEND+MORE=MONEY | S=9, E=5, N=6... -> 9567+1085=10652 |
-| **Hampiran Limit** | $= limit: x->0 | *Output aproksimasi numerik* |
+### 4. Eksekusi Komputasi dan Antarmuka Sistem
+Gunakan awalan $=  pada awal baris untuk mengeksekusi operasi matematika, manipulasi teks, atau perintah sistem operasi.
 
-## 💻 Contoh Penggunaan Fitur Logika
-Tulis ini di tugas.rhm:
-```text
-# Laporan Pengerjaan PR Matematika
----
-! Pastikan semua rumus sudah dievaluasi oleh RHM Engine.
+**A. Matematika Dasar dan Logaritma**
+ * $= 10 + 5 * 2 ^ 3 (Aritmatika presisi)
+ * $= log(10, 1000) (Logaritma)
+ * $= fact(5) (Faktorial)
+ * $= 100 % 3 (Modulo)
 
-## Hitungan Volume Wadah
-Berapa volume air yang bisa ditampung kubus dengan sisi 15 cm?
-$= geom: volume_kubus(15)
+**B. Trigonometri dan Akar**
+ * $= sin(1.57) / cos(0) / tan(1)
+ * $= sqrt(144) / cbrt(27)
+ * $= abs(-50.5)
 
-## Hitungan Logaritma Kompleks
-$= log(2, 256)
+**C. Statistika dan Data**
+ * $= max(10, 50) / min(10, 50)
+ * $= mean(10, 20, 30, 40)
+ * $= round(10.6) / floor(10.9) / ceil(10.1)
 
-Anggaran untuk membeli alat tulis hari ini:
-Beli penggaris baru: $ 15000
-Beli kalkulator: $1 12.50
+**D. Manipulasi String**
+ * $= str:len(Hitung panjang kalimat ini)
+ * $= str:upper(teks kapital)
+ * $= str:lower(TEKS KECIL)
+ * $= str:reverse(Dibalik)
 
-```
-Jalankan: rhm tugas.rhm
-*Diciptakan dengan penuh dedikasi oleh RH.*
+**E. Antarmuka Sistem (OS Bridge)**
+ * $= sys:os_info (Membaca jenis kernel OS)
+ * $= sys:arch (Membaca arsitektur CPU)
+ * $= env:USER (Membaca variabel environment)
+ * $= sys: ls -la (Mengeksekusi perintah shell OS)
+
+**F. Geometri dan Fisika**
+ * $= geom:luas_lingkaran(7)
+ * $= geom:volume_kubus(5)
+ * $= geom:luas_segitiga(10, 5)
+ * $= phys:kecepatan(100, 2)
+
+© RH
