@@ -1,7 +1,7 @@
 # 🚀 RH Markup (.rhm) Engine
 
 [![Version](https://img.shields.io/github/v/release/Rh-dt/RH-Markup?include_prereleases&color=blue&label=version)](https://github.com/Rh-dt/RH-Markup/releases)
-[![Last Commit](https://img.shields.io/github/last-commit/Rh-dt/RH-Markup?color=brightgreen)](https://github.com/Rh-dt/RH-Markup/commits/main)
+[![Last Commit](https://img.shields.io/github/last-commit/Rh-dt/RH-Markup?color=brightgreen)](https://github.com/Rh-dt/RH-Markup/commits/home)
 [![Repo Size](https://img.shields.io/github/repo-size/Rh-dt/RH-Markup?color=orange)](https://github.com/Rh-dt/RH-Markup)
 
 Selamat datang di **RH Markup (.rhm)**! Ini adalah bahasa *markup* berbasis teks generasi baru yang dirancang khusus untuk kecepatan, efisiensi pengetikan, dan eksekusi langsung di terminal secara mandiri (*Native CLI Rendering*). 
@@ -18,26 +18,33 @@ Ditulis murni menggunakan **Rust** tanpa dependensi eksternal (*Zero-Dependency*
 
 ---
 
-## 🛠️ Instalasi & Setup (Linux / MacOS / Codespaces)
+## 🛠️ Instalasi & Setup
 
-Karena ini adalah *Native Engine*, Anda harus mengompilasi dan menginstal *binary*-nya ke dalam sistem operasi Anda.
+RH Markup dapat diinstal di Linux, MacOS, Windows (via WSL), maupun GitHub Codespaces. Pilih salah satu metode instalasi di bawah ini:
 
-**1. Clone dan Build Engine:**
+### Instalasi via Cargo Git (Direkomendasikan)
+Jika Anda sudah memiliki Rust dan Cargo terinstal di sistem, Anda bisa langsung menginstal *engine* ini secara global menggunakan repositori ini sebagai *Source Package*:
 ```bash
-# Pastikan Rust sudah terinstal ([https://rustup.rs/](https://rustup.rs/))
-git clone https://github.com/Rh-dt/RH-Markup.git
-cd rhm_engine
-cargo build --release
+cargo install --git [https://github.com/Rh-dt/RH-Markup](https://github.com/Rh-dt/RH-Markup)
 
 ```
-**2. Jadikan Command Global:**
-Agar Anda bisa menjalankan perintah rhm dari mana saja, salin *binary* ke direktori sistem:
+### Unduh Binary Lengkap (Bagi User Non-Rust)
+Masuk ke tab **Releases**, unduh *file binary* rhm_engine terbaru, lalu jalankan perintah berikut di terminal:
 ```bash
+sudo cp rhm_engine /usr/local/bin/rhm
+chmod +x /usr/local/bin/rhm
+
+```
+### Build Manual dari Source Code
+```bash
+git clone [https://github.com/Rh-dt/RH-Markup.git](https://github.com/Rh-dt/RH-Markup.git)
+cd RH-Markup/rhm_engine
+cargo build --release
 sudo cp target/release/rhm_engine /usr/local/bin/rhm
 
 ```
-## 📖 Tutorial Singkat: Cara Menulis .rhm
-Buat sebuah file dengan ekstensi .rhm (contoh: catatan.rhm), lalu gunakan sintaks di bawah ini. Untuk melihat hasilnya di layar, cukup jalankan perintah:
+## 📖 Cara Menulis .rhm
+Buat sebuah file dengan ekstensi .rhm (contoh: catatan.rhm), lalu gunakan sintaks di bawah ini. Untuk melihat hasilnya di layar terminal, cukup jalankan perintah:
 ```bash
 rhm catatan.rhm
 
@@ -55,19 +62,16 @@ Pastikan Anda memberikan **satu spasi** setelah simbol sebelum mulai mengetik te
 | +  | Checklist (Tugas) | + Selesaikan fitur parser |
 | --- | Garis Pembatas (Rule) | --- (Tanpa spasi) |
 | ;  | Komentar Tersembunyi | ; Catatan ini tidak akan dirender |
-
 ### 2. Format Teks (Inline Elements)
 Gunakan simbol ini untuk mengapit kata atau kalimat di mana saja.
-
 | Sintaks | Fungsi & Output di Terminal |
-| :--- | :--- |
-| `*teks*` | Cetak tebal (**Bold** warna biru cyan) |
-| `_teks_` | Cetak miring (*Italic*) |
-| `'teks'` | Latar belakang kuning (*Highlight*) |
-| `` `teks` `` | Teks gaya kode (*Monospace* warna magenta) |
-| `~teks~` | Teks dicoret (~Strikethrough~) |
-| `^teks^` | Teks pangkat/eksponensial (warna biru) |
-
+|---|---|
+| *teks* | Cetak tebal (**Bold** warna biru cyan) |
+| _teks_ | Cetak miring (*Italic*) |
+| 'teks' | Latar belakang kuning (*Highlight*) |
+| `teks` | Teks gaya kode (*Monospace* warna magenta) |
+| ~teks~ | Teks dicoret (~~Strikethrough~~) |
+| ^teks^ | Teks pangkat/eksponensial (warna biru) |
 ### 3. Keajaiban Kurs Mata Uang (Shortcodes)
 Ketik lambang dolar ($), diikuti kode opsional, **WAJIB SPASI SATU KALI**, lalu ketik angkanya. Spasi akan otomatis dihilangkan saat dirender dan teks akan dicetak tebal berwarna hijau!
  * **Otomatis Rupiah:** $ 50000 ➡️ **Rp50000**
@@ -76,11 +80,10 @@ Ketik lambang dolar ($), diikuti kode opsional, **WAJIB SPASI SATU KALI**, lalu 
  * **Yen:** $3 5000 ➡️ **¥5000**
  * **Pound:** $4 80 ➡️ **£80**
  * **Riyal:** $5 120 ➡️ **﷼120**
-
 *(Catatan: Mendukung titik dan koma untuk format desimal!)*
 ## 💻 Contoh Dokumen Penuh
 **Tulis ini di demo.rhm:**
-```rhm
+```text
 # Rapat Tim Pengembangan v0.2
 ---
 ! Target rilis bulan depan tidak boleh tertunda.
