@@ -1,6 +1,6 @@
 {
   "name": "@rh-dt/rhm-framework",
-  "version": "1.0.1a",
+  "version": "1.4.1",
   "description": "Universal markup framework with native rust compiler for frontend ecosystems",
   "main": "index.js",
   "repository": {
