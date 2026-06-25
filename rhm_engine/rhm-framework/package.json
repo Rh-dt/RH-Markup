@@ -1,12 +1,16 @@
 {
-  "name": "rhm-framework",
-  "version": "1.0.0",
+  "name": "@rh-dt/rhm-framework",
+  "version": "1.0.1a",
   "description": "Universal markup framework with native rust compiler for frontend ecosystems",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rh-dt/RH-Markup.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   },
   "keywords": ["markup", "rust", "react", "vite", "plugin", "tailwind"],
-  "author": "RH",
+  "author": "Rh_dt",
   "license": "Apache-2.0"
 }
